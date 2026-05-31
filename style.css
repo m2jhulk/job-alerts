@@ -1,0 +1,91 @@
+/* बेसिक डार्क थीम और मॉडर्न फॉन्ट */
+body {
+    background-color: #0f172a;
+    color: #f8fafc;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    margin: 0;
+}
+
+/* मेन कार्ड का डिज़ाइन */
+.alert-card {
+    background: #1e293b;
+    padding: 40px 30px;
+    border-radius: 16px;
+    text-align: center;
+    max-width: 450px;
+    width: 90%;
+    border: 1px solid #334155;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5);
+}
+
+.alert-card h2 {
+    color: #38bdf8;
+    margin-top: 0;
+    font-size: 24px;
+    margin-bottom: 10px;
+}
+
+.alert-card p.description {
+    color: #94a3b8;
+    font-size: 15px;
+    line-height: 1.6;
+    margin-bottom: 25px;
+}
+
+/* इनपुट बॉक्स का डिज़ाइन */
+input[type="email"] {
+    width: 100%;
+    padding: 14px;
+    border-radius: 8px;
+    border: 1px solid #475569;
+    background-color: #0f172a;
+    color: #f8fafc;
+    outline: none;
+    box-sizing: border-box;
+    margin-bottom: 20px;
+    font-size: 16px;
+    transition: 0.3s;
+}
+
+input[type="email"]:focus {
+    border-color: #38bdf8;
+    box-shadow: 0 0 8px rgba(56, 189, 248, 0.3);
+}
+
+/* सब्सक्राइब बटन का डिज़ाइन */
+button {
+    width: 100%;
+    padding: 14px;
+    background: linear-gradient(135deg, #10b981, #059669);
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-size: 16px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 6px rgba(16, 185, 129, 0.2);
+}
+
+button:hover {
+    background: linear-gradient(135deg, #059669, #047857);
+    transform: translateY(-2px);
+}
+
+button:disabled {
+    background: #64748b;
+    cursor: not-allowed;
+    transform: none;
+}
+
+/* मेसेज दिखाने की जगह */
+#statusMsg {
+    margin-top: 20px;
+    font-size: 14px;
+    font-weight: 500;
+    min-height: 20px;
+}
