@@ -2,9 +2,8 @@ name: Sarkari Alerts Auto-Scraper
 
 on:
   schedule:
-    # 3 hours
     - cron: '0 */3 * * *'
-  workflow_dispatch: # manual run 
+  workflow_dispatch: 
 
 jobs:
   run-scraper:
@@ -12,10 +11,10 @@ jobs:
 
     steps:
     - name: Checkout Repository
-      uses: actions/checkout@v3
+      uses: actions/checkout@v4  # 👈 इसे v3 से v4 कर दिया गया है
 
     - name: Set up Python
-      uses: actions/setup-python@v4
+      uses: actions/setup-python@v5  # 👈 इसे v4 से v5 कर दिया गया है
       with:
         python-version: '3.10'
 
