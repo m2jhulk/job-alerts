@@ -7,11 +7,10 @@ from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
 
 # json फाइल का नाम (जो गिटहब पर अपडेट होगी)
-# यह सुनिश्चित करेगा कि फाइल हमेशा सही फोल्डर में ही पढ़ी और सेव की जाए
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 JSON_FILE = os.path.join(BASE_DIR, "jobs.json")
 
-# --- 1. f for ex data from site ---
+# --- 1. वेबसाइट से डेटा निकालने का फंक्शन ---
 def get_top_5_latest_jobs():
     url = "https://sarkariresult.com.cm/"
     headers = {
@@ -43,22 +42,29 @@ def get_top_5_latest_jobs():
     
     return []
 
-
-
-# --- 2. f for sending emails ---
+# --- 2. ईमेल भेजने का फंक्शन ---
 def send_email_alerts(new_jobs):
-    # os.environ 
+    # GitHub Secrets से डेटा मंगाना
     SENDER_EMAIL = os.environ.get("SENDER_EMAIL")
     APP_PASSWORD = os.environ.get("APP_PASSWORD")
+    SECRET_TOKEN = os.environ.get("SECRET_TOKEN") # 👈 यहाँ से टोकन आएगा
     
-    # google sc
-    GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwgCl4deP-e6_pPFDKM1x5_KOlO4GWUAvSqK0AfDQIcd-opsERhMHN_PKYAS8sDRqvYkw/exec"
+    # गूगल स्क्रिप्ट का सुरक्षित URL (टोकन के साथ)
+    BASE_URL = "https://script.google.com/macros/s/AKfycbwgCl4deP-e6_pPFDKM1x5_KOlO4GWUAvSqK0AfDQIcd-opsERhMHN_PKYAS8sDRqvYkw/exec"
+    GOOGLE_SCRIPT_URL = f"{BASE_URL}?token={SECRET_TOKEN}"
 
     print("🔄 गूगल शीट से सब्सक्राइबर्स की लिस्ट मंगा रहे हैं...")
     try:
         response = requests.get(GOOGLE_SCRIPT_URL)
         if response.status_code == 200:
-            RECEIVERS = response.json() # गूगल शीट से ईमेल्स की लिस्ट आ गई
+            RECEIVERS = response.json()
+            
+            # 🛡️ सुरक्षा कवच: अगर शीट ने ईमेल की जगह Error भेजा है
+            if isinstance(RECEIVERS, dict) and "error" in RECEIVERS:
+                print(f"❌ गूगल शीट एक्सेस एरर: {RECEIVERS['error']}")
+                print("💡 कृपया चेक करें कि आपका GitHub Secret Token सही है या नहीं।")
+                return
+
             print(f"✅ कुल {len(RECEIVERS)} सब्सक्राइबर्स मिले।")
         else:
             print("❌ गूगल शीट से जुड़ने में एरर।")
@@ -67,77 +73,18 @@ def send_email_alerts(new_jobs):
         print(f"❌ लिस्ट लाने में एरर: {e}")
         return
 
-    # अगर शीट में कोई ईमेल नहीं है, तो वापस लौट जाएं
+    # अगर शीट में कोई ईमेल नहीं है
     if not RECEIVERS or len(RECEIVERS) == 0:
         print("⚠️ कोई सब्सक्राइबर नहीं मिला, ईमेल नहीं भेजा गया।")
         return
 
-    if len(new_jobs) == 1:
-        subject = f"🚨 नया अपडेट: {new_jobs[0]['title']}"
-    else:
-        subject = f"🚨 {len(new_jobs)} नए अपडेट्स: {new_jobs[0]['title']} और अन्य"
-
-    jobs_html = ""
-    for job in new_jobs:
-        jobs_html += f"""
-        <div style="background-color: #f8fafc; padding: 15px; border-left: 5px solid #10b981; margin: 15px 0; border-radius: 4px;">
-            <h3 style="color: #0f172a; margin: 0 0 10px 0; font-size: 16px;">📌 {job['title']}</h3>
-            <a href="{job['link']}" style="background-color: #10b981; color: white; padding: 8px 15px; text-decoration: none; border-radius: 4px; font-weight: bold; font-size: 14px; display: inline-block;">
-                यहाँ क्लिक करके देखें
-            </a>
-        </div>
-        """
-
-    body = f"""
-    <html>
-        <body style="font-family: 'Segoe UI', Arial, sans-serif; color: #333; background-color: #f4f4f9; padding: 20px;">
-            <div style="background-color: #ffffff; border: 1px solid #ddd; padding: 20px; border-radius: 10px; max-width: 500px; margin: auto; box-shadow: 0 4px 8px rgba(0,0,0,0.05);">
-                <h2 style="color: #0284c7; text-align: center; border-bottom: 2px solid #f0f0f0; padding-bottom: 10px;">
-                    Sarkari Result Alert 🔔
-                </h2>
-                <p style="font-size: 16px;">नमस्कार,</p>
-                <p style="font-size: 15px; line-height: 1.5;">वेबसाइट पर <b>{len(new_jobs)} नई सरकारी जॉब / रिज़ल्ट</b> के अपडेट आए हैं:</p>
-                
-                {jobs_html}
-                
-                <hr style="border: none; border-top: 1px solid #eee; margin-top: 30px;">
-                <p style="font-size: 12px; color: #94a3b8; text-align: center; margin-bottom: 0;">
-                    यह एक ऑटोमैटिक अलर्ट है।
-                </p>
-            </div>
-        </body>
-    </html>
-    """
-
-    try:
-        print("\n📧 ईमेल सर्वर से कनेक्ट हो रहे हैं...")
-        server = smtplib.SMTP('smtp.gmail.com', 587)
-        server.starttls()
-        server.login(SENDER_EMAIL, APP_PASSWORD)
-
-        for receiver in RECEIVERS:
-            msg = MIMEMultipart()
-            msg['From'] = f"Sarkari Alerts <{SENDER_EMAIL}>"
-            msg['To'] = receiver
-            msg['Subject'] = subject
-            msg.attach(MIMEText(body, 'html'))
-            
-            server.sendmail(SENDER_EMAIL, receiver, msg.as_string())
-            print(f"✅ ईमेल सफलतापूर्वक भेजा गया: {receiver}")
-
-        server.quit()
-    except Exception as e:
-        print(f"❌ ईमेल भेजने में एरर: {e}")
-    
-
-    
-  # अगर 1 जॉब है तो सब्जेक्ट अलग, 1 से ज़्यादा हैं तो अलग
+    # सब्जेक्ट सेट करना
     if len(new_jobs) == 1:
         subject = f"🚨 नई भर्ती: {new_jobs[0]['title']}"
     else:
         subject = f"🚨 {len(new_jobs)} नई भर्तियां: {new_jobs[0]['title']} और अन्य"
 
-    # लूप चलाकर HTML के अंदर सभी नई जॉब्स के बॉक्स तैयार करना
+    # HTML के अंदर सभी नई जॉब्स के बॉक्स तैयार करना
     jobs_html = ""
     for job in new_jobs:
         jobs_html += f"""
@@ -149,7 +96,7 @@ def send_email_alerts(new_jobs):
         </div>
         """
 
-    # मुख्य ईमेल की बॉडी (सिर्फ नई भर्ती के लिए)
+    # मुख्य ईमेल की बॉडी 
     body = f"""
     <!DOCTYPE html>
     <html>
@@ -214,7 +161,6 @@ def send_email_alerts(new_jobs):
     except Exception as e:
         print(f"❌ ईमेल भेजने में एरर: {e}")
 
-
 # --- 3. नया अपडेट चेक करने और डेटाबेस (JSON) अपडेट करने का फंक्शन ---
 def check_and_update_jobs():
     print("🔎 वेबसाइट चेक कर रहे हैं...")
@@ -255,7 +201,6 @@ def check_and_update_jobs():
         
     else:
         print("\n💤 कोई नया अपडेट नहीं है। पुरानी जॉब ही चल रही है।")
-
 
 # --- स्क्रिप्ट रन करना ---
 if __name__ == "__main__":
