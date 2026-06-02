@@ -1,47 +1,66 @@
+// --- 1. ईमेल सब्सक्रिप्शन लॉजिक ---
 const form = document.getElementById('alertForm');
 const statusMsg = document.getElementById('statusMsg');
 const submitBtn = document.getElementById('submitBtn');
 
-// i dont have back end so... 
+// google sc url
 const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwgCl4deP-e6_pPFDKM1x5_KOlO4GWUAvSqK0AfDQIcd-opsERhMHN_PKYAS8sDRqvYkw/exec"; 
 
 form.addEventListener('submit', e => {
     e.preventDefault();
     
-    
 
-    // लोडिंग स्टेट
     submitBtn.innerText = "Subscribing...";
     submitBtn.disabled = true;
     statusMsg.innerText = "";
     
-    const formData = new FormData(form);
-
-    fetch(GOOGLE_SCRIPT_URL, {
-        method: 'POST',
-        body: formData
-    })
+    fetch(GOOGLE_SCRIPT_URL, { method: 'POST', body: new FormData(form) })
     .then(response => response.text())
     .then(data => {
         if(data.includes("Success")) {
-            statusMsg.innerText = "🎉 बधाई हो! आपने सफलतापूर्वक सब्सक्राइब कर लिया है।";
-            statusMsg.style.color = "#10b981"; // हरा रंग
-            form.reset();
+            statusMsg.innerText = "🎉 सफलतापूर्वक सब्सक्राइब कर लिया गया है।";
+            statusMsg.style.color = "#10b981"; form.reset();
         } else if(data.includes("already subscribed")) {
             statusMsg.innerText = "ℹ️ यह ईमेल पहले से ही सब्सक्राइब है!";
-            statusMsg.style.color = "#fbbf24"; // पीला रंग
-        } else {
-            statusMsg.innerText = "❌ कुछ गलत हुआ। कृपया दोबारा प्रयास करें।";
-            statusMsg.style.color = "#ef4444"; // लाल रंग
-        }
+            statusMsg.style.color = "#fbbf24";
+        } else { throw new Error('Failed'); }
     })
-    .catch(error => {
-        statusMsg.innerText = "❌ नेटवर्क एरर! कृपया अपना इंटरनेट चेक करें।";
+    .catch(() => {
+        statusMsg.innerText = "❌ एरर! कृपया दोबारा प्रयास करें।";
         statusMsg.style.color = "#ef4444";
     })
     .finally(() => {
-        // बटन को वापस नॉर्मल करना
         submitBtn.innerText = "Subscribe Now";
         submitBtn.disabled = false;
     });
 });
+
+// --- 2. लाइव जॉब्स दिखाने का लॉजिक ---
+function loadLatestJobs() {
+    const jobsList = document.getElementById('liveJobsList');
+    
+    // jobs.json फाइल से डेटा फैच करना
+    fetch('jobs.json')
+        .then(response => response.json())
+        .then(jobs => {
+            jobsList.innerHTML = ''; // लोडिंग टेक्स्ट हटाएं
+            
+            jobs.forEach(job => {
+                // हर जॉब के लिए एक <li> और <a> टैग बनाना
+                const li = document.createElement('li');
+                const a = document.createElement('a');
+                a.href = job.link;
+                a.target = "_blank"; // नए टैब में खोलने के लिए
+                a.innerText = "📌 " + job.title;
+                
+                li.appendChild(a);
+                jobsList.appendChild(li);
+            });
+        })
+        .catch(error => {
+            jobsList.innerHTML = '<li style="color: #ef4444;">⚠️ जॉब्स लोड नहीं हो पाईं।</li>';
+        });
+}
+
+// पेज लोड होते ही जॉब्स वाला फंक्शन चलाएं
+loadLatestJobs();
