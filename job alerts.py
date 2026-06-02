@@ -129,11 +129,11 @@ def send_email_alerts(new_jobs):
     except Exception as e:
         print(f"❌ ईमेल भेजने में एरर: {e}")
     # 👇 यहाँ अपना सेकेंडरी जीमेल और 16-अक्षरों वाला App Password डालें
-    SENDER_EMAIL = "mon2yadav2@gmail.com"
-    APP_PASSWORD = "tzjm iezy mmfb lbem" 
+    SENDER_EMAIL = ""
+    APP_PASSWORD = "" 
     
     # 👇 अभी टेस्टिंग के लिए अपना पर्सनल (प्राइमरी) ईमेल डालें जहाँ आपको अलर्ट चाहिए
-    RECEIVERS = ["kosindrayadav@gmail.com"] 
+    RECEIVERS = [""] 
 
     
   # अगर 1 जॉब है तो सब्जेक्ट अलग, 1 से ज़्यादा हैं तो अलग
