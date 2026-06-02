@@ -5,16 +5,23 @@ on:
     - cron: '0 */3 * * *'
   workflow_dispatch: 
 
+env:
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
+
+# 👇 यह नया ब्लॉक जोड़ें: बॉट को फाइल अपडेट (Write) करने की परमिशन देने के लिए
+permissions:
+  contents: write
+
 jobs:
   run-scraper:
     runs-on: ubuntu-latest
 
     steps:
     - name: Checkout Repository
-      uses: actions/checkout@v4  # 👈 इसे v3 से v4 कर दिया गया है
+      uses: actions/checkout@v4
 
     - name: Set up Python
-      uses: actions/setup-python@v5  # 👈 इसे v4 से v5 कर दिया गया है
+      uses: actions/setup-python@v5
       with:
         python-version: '3.10'
 
