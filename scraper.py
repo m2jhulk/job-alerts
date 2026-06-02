@@ -11,7 +11,7 @@ from email.mime.multipart import MIMEMultipart
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 JSON_FILE = os.path.join(BASE_DIR, "jobs.json")
 
-# --- 1. वेबसाइट से डेटा निकालने का फंक्शन ---
+# --- 1. f for ex data from site ---
 def get_top_5_latest_jobs():
     url = "https://sarkariresult.com.cm/"
     headers = {
@@ -45,13 +45,13 @@ def get_top_5_latest_jobs():
 
 
 
-# --- 2. ईमेल भेजने का फंक्शन ---
+# --- 2. f for sending emails ---
 def send_email_alerts(new_jobs):
-    # 👇 अपना सेकेंडरी जीमेल और App Password डालें
-    SENDER_EMAIL = "your_secondary_email@gmail.com"
-    APP_PASSWORD = "your_16_digit_app_password" 
+    # os.environ 
+    SENDER_EMAIL = os.environ.get("SENDER_EMAIL")
+    APP_PASSWORD = os.environ.get("APP_PASSWORD")
     
-    # 👇 यहाँ अपना Google Apps Script वाला वही URL डालें जो HTML में डाला था
+    # google sc
     GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwgCl4deP-e6_pPFDKM1x5_KOlO4GWUAvSqK0AfDQIcd-opsERhMHN_PKYAS8sDRqvYkw/exec"
 
     print("🔄 गूगल शीट से सब्सक्राइबर्स की लिस्ट मंगा रहे हैं...")
