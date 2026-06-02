@@ -1,4 +1,3 @@
-/* बेसिक डार्क थीम और मॉडर्न फॉन्ट */
 body {
     background-color: #0f172a;
     color: #f8fafc;
@@ -6,86 +5,55 @@ body {
     display: flex;
     justify-content: center;
     align-items: center;
-    height: 100vh;
+    min-height: 100vh;
     margin: 0;
+    padding: 20px;
 }
 
-/* मेन कार्ड का डिज़ाइन */
-.alert-card {
+.main-container {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    width: 100%;
+    max-width: 450px;
+}
+
+/* कार्ड्स का डिज़ाइन */
+.alert-card, .jobs-card {
     background: #1e293b;
-    padding: 40px 30px;
+    padding: 30px;
     border-radius: 16px;
     text-align: center;
-    max-width: 450px;
-    width: 90%;
     border: 1px solid #334155;
     box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5);
 }
 
-.alert-card h2 {
-    color: #38bdf8;
-    margin-top: 0;
-    font-size: 24px;
-    margin-bottom: 10px;
-}
+/* फॉर्म की स्टाइलिंग */
+.alert-card h2 { color: #38bdf8; margin-top: 0; font-size: 24px; margin-bottom: 10px; }
+.alert-card p.description { color: #94a3b8; font-size: 15px; line-height: 1.6; margin-bottom: 25px; }
 
-.alert-card p.description {
-    color: #94a3b8;
-    font-size: 15px;
-    line-height: 1.6;
-    margin-bottom: 25px;
-}
-
-/* इनपुट बॉक्स का डिज़ाइन */
 input[type="email"] {
-    width: 100%;
-    padding: 14px;
-    border-radius: 8px;
-    border: 1px solid #475569;
-    background-color: #0f172a;
-    color: #f8fafc;
-    outline: none;
-    box-sizing: border-box;
-    margin-bottom: 20px;
-    font-size: 16px;
-    transition: 0.3s;
+    width: 100%; padding: 14px; border-radius: 8px; border: 1px solid #475569;
+    background-color: #0f172a; color: #f8fafc; outline: none; box-sizing: border-box;
+    margin-bottom: 15px; font-size: 16px; transition: 0.3s;
 }
+input[type="email"]:focus { border-color: #38bdf8; box-shadow: 0 0 8px rgba(56, 189, 248, 0.3); }
 
-input[type="email"]:focus {
-    border-color: #38bdf8;
-    box-shadow: 0 0 8px rgba(56, 189, 248, 0.3);
-}
-
-/* सब्सक्राइब बटन का डिज़ाइन */
 button {
-    width: 100%;
-    padding: 14px;
-    background: linear-gradient(135deg, #10b981, #059669);
-    color: white;
-    border: none;
-    border-radius: 8px;
-    font-size: 16px;
-    font-weight: bold;
-    cursor: pointer;
-    transition: all 0.3s ease;
-    box-shadow: 0 4px 6px rgba(16, 185, 129, 0.2);
+    width: 100%; padding: 14px; background: linear-gradient(135deg, #10b981, #059669);
+    color: white; border: none; border-radius: 8px; font-size: 16px; font-weight: bold;
+    cursor: pointer; transition: all 0.3s ease; box-shadow: 0 4px 6px rgba(16, 185, 129, 0.2);
 }
+button:hover { background: linear-gradient(135deg, #059669, #047857); transform: translateY(-2px); }
+button:disabled { background: #64748b; cursor: not-allowed; transform: none; }
 
-button:hover {
-    background: linear-gradient(135deg, #059669, #047857);
-    transform: translateY(-2px);
-}
+#statusMsg { margin-top: 15px; font-size: 14px; font-weight: 500; min-height: 20px; }
 
-button:disabled {
-    background: #64748b;
-    cursor: not-allowed;
-    transform: none;
-}
-
-/* मेसेज दिखाने की जगह */
-#statusMsg {
-    margin-top: 20px;
-    font-size: 14px;
-    font-weight: 500;
-    min-height: 20px;
-}
+/* जॉब्स लिस्ट की स्टाइलिंग */
+.jobs-card h3 { color: #fbbf24; margin-top: 0; margin-bottom: 20px; font-size: 20px; text-align: left;}
+#liveJobsList { list-style: none; padding: 0; margin: 0; text-align: left; }
+#liveJobsList li { margin-bottom: 12px; padding-bottom: 12px; border-bottom: 1px solid #334155; }
+#liveJobsList li:last-child { margin-bottom: 0; padding-bottom: 0; border-bottom: none; }
+#liveJobsList li a { color: #e2e8f0; text-decoration: none; font-size: 15px; transition: 0.3s; display: block; line-height: 1.4;}
+#liveJobsList li a:hover { color: #38bdf8; padding-left: 5px; }
+.loading { color: #94a3b8; font-style: italic; }
