@@ -28,6 +28,7 @@ jobs:
       env:
         SENDER_EMAIL: ${{ secrets.SENDER_EMAIL }}
         APP_PASSWORD: ${{ secrets.APP_PASSWORD }}
+        SECRET_TOKEN: ${{ secrets.SECRET_TOKEN }}
       run: python scraper.py
 
     - name: Save updated jobs.json back to GitHub
